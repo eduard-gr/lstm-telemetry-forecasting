@@ -3,14 +3,16 @@ import matplotlib.pyplot as pyplot
 import mplcursors
 import seaborn as sns
 
-test_size = 1000
-df = pd.read_csv('fm_volvo_odb_telemetry.json').iloc[:test_size, :]
-
+test_size = 3000
+#.iloc[:test_size, :]
+df = pd.read_csv('fm_volvo_odb_telemetry.csv', index_col=0).interpolate(method='linear', axis=0)
+#df.info()
+exit(0)
 #read_csv('recent-grads.csv')
 #print(dt.shape)
 #print(dt.dtypes)
 
-#print(df.head(3))
+print(df.head())
 
 #print()
 
@@ -47,51 +49,56 @@ def position_cenerator():
 
 position = position_cenerator()
 
-
+#.interpolate(method='akima', order=5)
 pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["speed"].interpolate(method='akima', order=5).values)
+pyplot.plot(df["speed"].values)
 pyplot.title("VehicleSpeed", y=1, loc='left')
 
 pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["maf"].interpolate(method='akima', order=5).values)
+pyplot.plot(df["maf"].values)
 pyplot.title("MAF", y=1, loc='left')
 
 pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["engine_rpm"].interpolate(method='akima', order=5).values)
+pyplot.plot(df["engine_rpm"].values)
 pyplot.title("EngineRPM", y=1, loc='left')
 
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["egr_error"].interpolate(method='akima', order=5).values)
-pyplot.title("EGRError", y=1, loc='left')
 
 pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["commanded_egr"].interpolate(method='akima', order=5).values)
-pyplot.title("CommandedEGR", y=1, loc='left')
-
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["intake_map"].interpolate(method='akima', order=5).values)
-pyplot.title("IntakeMAP", y=1, loc='left')
-
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["engine_load"].interpolate(method='akima', order=5).values)
-pyplot.title("EngineLoad", y=1, loc='left')
-
-
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["throttle_position"].interpolate(method='akima', order=5).values)
+pyplot.plot(df["throttle_position"].values)
 pyplot.title("ThrottlePosition", y=1, loc='left')
 
 pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["barometic_pressure"].interpolate(method='akima', order=5).values)
-pyplot.title("BarometicPressure", y=1, loc='left')
-
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["direct_fuel_rail_pressure"].interpolate(method='akima', order=5).values)
+pyplot.plot(df["direct_fuel_rail_pressure"].values)
 pyplot.title("DirectFuelRailPressure", y=1, loc='left')
 
+
 pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["ignition"].values)
-pyplot.plot(df["movement"].values)
+pyplot.plot(df["egr_error"].values)
+pyplot.title("EGRError", y=1, loc='left')
+
+pyplot.subplot(plots, 1, next(position))
+pyplot.plot(df["commanded_egr"].values)
+pyplot.title("CommandedEGR", y=1, loc='left')
+
+pyplot.subplot(plots, 1, next(position))
+pyplot.plot(df["intake_map"].values)
+pyplot.title("IntakeMAP", y=1, loc='left')
+
+pyplot.subplot(plots, 1, next(position))
+pyplot.plot(df["engine_load"].values)
+pyplot.title("EngineLoad", y=1, loc='left')
+
+
+
+pyplot.subplot(plots, 1, next(position))
+pyplot.plot(df["barometic_pressure"].values)
+pyplot.title("BarometicPressure", y=1, loc='left')
+
+
+
+pyplot.subplot(plots, 1, next(position))
+pyplot.plot(df["fmmu_type"].values)
+#pyplot.plot(df["movement"].values)
 pyplot.title("I\M", y=1, loc='left')
 
 pyplot.subplot(plots, 1, next(position))
@@ -114,7 +121,7 @@ pyplot.subplot(plots, 1, next(position))
 pyplot.plot(df["control_module_voltage"].values)
 pyplot.title("ControlModuleVoltage", y=1, loc='left')
 
-#mplcursors.cursor(hover=True)
+mplcursors.cursor(hover=True)
 pyplot.show()
 
 

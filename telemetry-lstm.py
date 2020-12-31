@@ -18,42 +18,33 @@ from tensorflow import keras
 print(tf.__version__)
 
 
-set_option('display.max_columns', None)
+#set_option('display.max_columns', None)
 
 # Set CPU as available physical device
 #my_devices = tf.config.experimental.list_physical_devices(device_type='CPU')
 #tf.config.experimental.set_visible_devices(devices= my_devices, device_type='CPU')
 
-def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
+def series_to_supervised(data):
     n_vars = 1 if type(data) is list else data.shape[1]
-    df = DataFrame(data)
+
+    #df = DataFrame(data)
     cols, names = list(), list()
-    # input sequence (t-n, ... t-1)
-    for i in range(n_in, 0, -1):
-        cols.append(df.shift(i))
-        names += [('var%d(t-%d)' % (j + 1, i)) for j in range(n_vars)]
-    # forecast sequence (t, t+1, ... t+n)
-    for i in range(0, n_out):
-        cols.append(df.shift(-i))
-        if i == 0:
-            names += [('var%d(t)' % (j + 1)) for j in range(n_vars)]
-        else:
-            names += [('var%d(t+%d)' % (j + 1, i)) for j in range(n_vars)]
-    # put it all together
+
+    cols.append(data.shift(1))
+    names += [('var%d(t-%d)' % (j + 1, 1)) for j in range(n_vars)]
+
+    cols.append(data.shift(-0)[0])
+    names += ['var1(1)']
+
     agg = concat(cols, axis=1)
     agg.columns = names
-    # drop rows with NaN values
-    if dropnan:
-        agg.dropna(inplace=True)
+
     return agg
 
 # load dataset
-df = read_csv('fm_volvo_odb_telemetry.json', header=0, index_col=0)
-
-interpolated = df.interpolate()
-print(interpolated.head())
-
-values = interpolated.values
+df = read_csv('fm_volvo_odb_telemetry.csv', index_col=0).interpolate(method='linear', axis=0)
+#, header=0, index_col=0
+values = df.values
 
 # ensure all data is float
 values = values.astype('float32')
@@ -62,11 +53,12 @@ values = values.astype('float32')
 scaler = MinMaxScaler(feature_range=(0, 1))
 scaled = DataFrame(scaler.fit_transform(values))
 
-#print(scaled.head())
+print(scaled.head())
 
-reframed = series_to_supervised(scaled, 1, 1)
-# drop columns we don't want to predict
-reframed.drop(reframed.columns[[18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]], axis=1, inplace=True)
+reframed = series_to_supervised(scaled)
+
+#Udaljaem NaN
+reframed.dropna(inplace=True)
 
 print("supervised series")
 print(reframed.head())
@@ -76,15 +68,14 @@ test = reframed.iloc[:test_size, :]
 train = reframed.iloc[test_size:, :]
 
 print('train:', len(train.index))
-print(train.head())
-print('...')
-print(train.tail())
-
+# print(train.head())
+# print('...')
+# print(train.tail())
 
 print('test:', len(test.index))
-print(test.head())
-print('...')
-print(test.tail())
+# print(test.head())
+# print('...')
+# print(test.tail())
 
 
 # Otdeljaem zpolsednjuju kolonku v kotrooj hranatjsa znachnija rpm + 1
@@ -116,40 +107,41 @@ print(
 # print(test_X)
 # print(test_y)
 
-# #design network
-# model = Sequential()
-# model.add(LSTM(50, input_shape=(train_X.shape[1], train_X.shape[2])))
-# model.add(Dense(1))
-#
-# model.compile(
-#     loss='mae',
-#     optimizer='adam')
-#
-# # fit network
-# history = model.fit(
-#     train_X,
-#     train_y,
-#     epochs=50,
-#     batch_size=72,
-#     validation_data=(test_X, test_y),
-#     verbose=1,
-#     shuffle=False)
-#
+#design network
+model = Sequential()
+model.add(LSTM(100, input_shape=(train_X.shape[1], train_X.shape[2])))
+model.add(Dense(1))
+
+model.compile(
+    loss='mae',
+    optimizer='adam')
+
+# fit network
+history = model.fit(
+    train_X,
+    train_y,
+    epochs=50,
+    batch_size=72,
+    validation_data=(test_X, test_y),
+    verbose=1,
+    shuffle=False)
+
 # print("save model")
 # model.save('telemetry-model')
 
-model = keras.models.load_model('telemetry-model')
+#model = keras.models.load_model('telemetry-model')
 
 # plot history
-#pyplot.plot(history.history['loss'], label='train')
-#pyplot.plot(history.history['val_loss'], label='test')
-#pyplot.legend()
-#pyplot.show()
+pyplot.plot(history.history['loss'], label='train')
+pyplot.plot(history.history['val_loss'], label='test')
+pyplot.legend()
+pyplot.show()
 
 # make a prediction
 yhat = model.predict(test_X)
 #yhat[yhat < 0] = 0
 test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
+
 
 # invert scaling for forecast
 inv_yhat = concatenate((yhat, test_X[:, 1:]), axis=1)
@@ -160,23 +152,24 @@ inv_yhat = inv_yhat[:, 0]
 
 # invert scaling for actual
 test_y = test_y.reshape((len(test_y), 1))
+
 inv_y = concatenate((test_y, test_X[:, 1:]), axis=1)
 inv_y = scaler.inverse_transform(inv_y)
 inv_y = inv_y[:, 0]
 
 
-print("predicted")
-df_yhat = DataFrame(yhat)
-print(df_yhat.head())
-print("...")
-print(df_yhat.tail())
+# print("predicted")
+# df_yhat = DataFrame(yhat)
+# print(df_yhat.head())
+# print("...")
+# print(df_yhat.tail())
 
 
-print("inv_y")
-df_test_y = DataFrame(test_y)
-print(df_test_y.head())
-print("...")
-print(df_test_y.tail())
+# print("inv_y")
+# df_test_y = DataFrame(test_y)
+# print(df_test_y.head())
+# print("...")
+# print(df_test_y.tail())
 
 # calculate RMSE
 rmse = sqrt(mean_squared_error(inv_y, inv_yhat))

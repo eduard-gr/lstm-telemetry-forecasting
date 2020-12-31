@@ -9,3 +9,4 @@ error.log
 *error.log
 gitignore/*
 .idea/
+telemetry-model/
