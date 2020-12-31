@@ -1,0 +1,37 @@
+Razmernost viborki 15402
+Do linejnoj iterpolzjacii daninh
+Epoch 46/50
+72/72 - 0s - loss: 0.0090 - val_loss: 0.0134
+Epoch 47/50
+72/72 - 0s - loss: 0.0098 - val_loss: 0.0131
+Epoch 48/50
+72/72 - 0s - loss: 0.0089 - val_loss: 0.0129
+Epoch 49/50
+72/72 - 0s - loss: 0.0078 - val_loss: 0.0130
+Epoch 50/50
+72/72 - 0s - loss: 0.0087 - val_loss: 0.0170
+Test RMSE: 122.458
+
+Posle linejnoj iterpolzjacii
+214/214 - 1s - loss: 0.0183 - val_loss: 0.0696
+Epoch 43/50
+214/214 - 1s - loss: 0.0190 - val_loss: 0.0770
+Epoch 44/50
+214/214 - 1s - loss: 0.0198 - val_loss: 0.0663
+Epoch 45/50
+214/214 - 1s - loss: 0.0178 - val_loss: 0.0669
+Epoch 46/50
+214/214 - 1s - loss: 0.0177 - val_loss: 0.0702
+Epoch 47/50
+214/214 - 1s - loss: 0.0182 - val_loss: 0.0726
+Epoch 48/50
+214/214 - 1s - loss: 0.0187 - val_loss: 0.0742
+Epoch 49/50
+214/214 - 1s - loss: 0.0192 - val_loss: 0.0654
+Epoch 50/50
+214/214 - 1s - loss: 0.0173 - val_loss: 0.0673
+Test RMSE: 298.060
+
+
+Razmernost 13766
+Tolko mashina v dvizenie

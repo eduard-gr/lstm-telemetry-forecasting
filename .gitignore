@@ -1,0 +1,11 @@
+vendor/*
+.DS_Store
+.phpunit.result.cache
+.vagrant/
+vagrant
+error.log
+*.DS_Store
+error.log
+*error.log
+gitignore/*
+.idea/
