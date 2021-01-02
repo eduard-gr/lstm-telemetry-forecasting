@@ -3,16 +3,17 @@ import matplotlib.pyplot as pyplot
 import mplcursors
 import seaborn as sns
 
-test_size = 3000
-#.iloc[:test_size, :]
-df = pd.read_csv('fm_volvo_odb_telemetry.csv', index_col=0).interpolate(method='linear', axis=0)
+test_size = 1000
+
+df = pd.read_csv('fm_volvo_odb_telemetry.csv', index_col=0).iloc[:test_size, :]
+#.interpolate(method='linear', axis=0)
 #df.info()
-exit(0)
+
 #read_csv('recent-grads.csv')
 #print(dt.shape)
 #print(dt.dtypes)
 
-print(df.head())
+#print(df.head())
 
 #print()
 
@@ -33,7 +34,7 @@ print(df.head())
 #{"DTC": 0, "MAF": 2958, "Date": "2020-11-22T16:38:48", "EGRError": 0, "Ignition": 1, "EngineRPM": 1405, "FuelLevel": 99, "IntakeMAP": 113, "EngineLoad": 47, "CommandedEGR": 15, "VehicleSpeed": 76, "ThrottlePosition": 7,
 # "BarometicPressure": 100, "CoolantTemperature": 88, "ControlModuleVoltage": 14960, "IntakeAirTemperature": 8, "AmbientAirTemperature": 5, "DirectFuelRailPressure": 9478},
 
-plots = 14
+plots = 4 #14
 
 pyplot.figure()
 pyplot.subplots_adjust(hspace=0.5,bottom=0.05,top=0.95)
@@ -54,74 +55,75 @@ pyplot.subplot(plots, 1, next(position))
 pyplot.plot(df["speed"].values)
 pyplot.title("VehicleSpeed", y=1, loc='left')
 
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["maf"].values)
-pyplot.title("MAF", y=1, loc='left')
+# pyplot.subplot(plots, 1, next(position))
+# pyplot.plot(df["maf"].values)
+# pyplot.title("MAF", y=1, loc='left')
 
 pyplot.subplot(plots, 1, next(position))
 pyplot.plot(df["engine_rpm"].values)
 pyplot.title("EngineRPM", y=1, loc='left')
 
 
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["throttle_position"].values)
-pyplot.title("ThrottlePosition", y=1, loc='left')
+# pyplot.subplot(plots, 1, next(position))
+# pyplot.plot(df["throttle_position"].values)
+# pyplot.title("ThrottlePosition", y=1, loc='left')
 
 pyplot.subplot(plots, 1, next(position))
 pyplot.plot(df["direct_fuel_rail_pressure"].values)
 pyplot.title("DirectFuelRailPressure", y=1, loc='left')
 
-
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["egr_error"].values)
-pyplot.title("EGRError", y=1, loc='left')
-
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["commanded_egr"].values)
-pyplot.title("CommandedEGR", y=1, loc='left')
-
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["intake_map"].values)
-pyplot.title("IntakeMAP", y=1, loc='left')
-
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["engine_load"].values)
-pyplot.title("EngineLoad", y=1, loc='left')
-
-
-
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["barometic_pressure"].values)
-pyplot.title("BarometicPressure", y=1, loc='left')
-
-
-
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["fmmu_type"].values)
-#pyplot.plot(df["movement"].values)
-pyplot.title("I\M", y=1, loc='left')
-
 pyplot.subplot(plots, 1, next(position))
 pyplot.plot(df["fuel_level"].values)
 pyplot.title("FuelLevel", y=1, loc='left')
 
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["coolant_temperature"].values)
-pyplot.title("CoolantTemperature", y=1, loc='left')
 
-#pyplot.subplot(plots, 1, 14)
-pyplot.plot(df["intake_air_temperature"].values)
-pyplot.title("IntakeAirTemperature", y=1, loc='left')
+# pyplot.subplot(plots, 1, next(position))
+# pyplot.plot(df["egr_error"].values)
+# pyplot.title("EGRError", y=1, loc='left')
 
-#pyplot.subplot(plots, 1, 15)
-pyplot.plot(df["ambient_air_temperature"].values)
-pyplot.title("AmbientAirTemperature", y=1, loc='left')
+# pyplot.subplot(plots, 1, next(position))
+# pyplot.plot(df["commanded_egr"].values)
+# pyplot.title("CommandedEGR", y=1, loc='left')
 
-pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["control_module_voltage"].values)
-pyplot.title("ControlModuleVoltage", y=1, loc='left')
+# pyplot.subplot(plots, 1, next(position))
+# pyplot.plot(df["intake_map"].values)
+# pyplot.title("IntakeMAP", y=1, loc='left')
 
-mplcursors.cursor(hover=True)
+# pyplot.subplot(plots, 1, next(position))
+# pyplot.plot(df["engine_load"].values)
+# pyplot.title("EngineLoad", y=1, loc='left')
+
+
+
+# pyplot.subplot(plots, 1, next(position))
+# pyplot.plot(df["barometic_pressure"].values)
+# pyplot.title("BarometicPressure", y=1, loc='left')
+
+
+
+# pyplot.subplot(plots, 1, next(position))
+# pyplot.plot(df["fmmu_type"].values)
+# #pyplot.plot(df["movement"].values)
+# pyplot.title("I\M", y=1, loc='left')
+
+
+# pyplot.subplot(plots, 1, next(position))
+# pyplot.plot(df["coolant_temperature"].values)
+# pyplot.title("CoolantTemperature", y=1, loc='left')
+
+# #pyplot.subplot(plots, 1, 14)
+# pyplot.plot(df["intake_air_temperature"].values)
+# pyplot.title("IntakeAirTemperature", y=1, loc='left')
+
+# #pyplot.subplot(plots, 1, 15)
+# pyplot.plot(df["ambient_air_temperature"].values)
+# pyplot.title("AmbientAirTemperature", y=1, loc='left')
+
+# pyplot.subplot(plots, 1, next(position))
+# pyplot.plot(df["control_module_voltage"].values)
+# pyplot.title("ControlModuleVoltage", y=1, loc='left')
+
+#mplcursors.cursor(hover=True)
 pyplot.show()
 
 
