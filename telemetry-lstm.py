@@ -12,6 +12,7 @@ from sklearn.metrics import mean_squared_error
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
+from keras.layers import GRU
 import tensorflow as tf
 from tensorflow import keras
 
@@ -109,7 +110,7 @@ print(
 
 #design network
 model = Sequential()
-model.add(LSTM(100, input_shape=(train_X.shape[1], train_X.shape[2])))
+model.add(GRU(400, input_shape=(train_X.shape[1], train_X.shape[2])))
 model.add(Dense(1))
 
 model.compile(
@@ -120,7 +121,7 @@ model.compile(
 history = model.fit(
     train_X,
     train_y,
-    epochs=50,
+    epochs=100,
     batch_size=72,
     validation_data=(test_X, test_y),
     verbose=1,
