@@ -18,8 +18,13 @@ from keras.layers import RNN
 import tensorflow as tf
 from tensorflow import keras
 
-print(tf.__version__)
 
+if(len(argv) != 5):
+    print("unit epoch batch")
+    print("telemetry-lstm.py LSTM 100 100 70")
+    exit(1)
+
+print(tf.__version__)
 
 _, rnn, unit, epoch, batch = argv
 

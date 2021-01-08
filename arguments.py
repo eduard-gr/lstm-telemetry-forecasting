@@ -18,4 +18,3 @@ print(
 	'epoch:', epoch,
 	'batch:', batch)
 
-pyplot.title('Prediction result RMSE:%.3f rnn:%s unit:%d epoch:%d batch:%d ' % (0.543534543423, rnn, unit, epoch, batch))
