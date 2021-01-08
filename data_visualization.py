@@ -38,6 +38,7 @@ plots = 4 #14
 
 pyplot.figure()
 pyplot.subplots_adjust(hspace=0.5,bottom=0.05,top=0.95)
+#pyplot.title("EngineRPM", y=1, loc='left')
 
 
 #pyplot.plot(df["MAF"].values)
@@ -50,18 +51,25 @@ def position_cenerator():
 
 position = position_cenerator()
 
+
+
 #.interpolate(method='akima', order=5)
+
 pyplot.subplot(plots, 1, next(position))
 pyplot.plot(df["speed"].values)
-pyplot.title("VehicleSpeed", y=1, loc='left')
-
+pyplot.ylabel('Speed')
+#pyplot.legend()
+pyplot.title('Prediction result RMSE:%.3f Test:%d ' % (0.543534543423, 123))
 # pyplot.subplot(plots, 1, next(position))
 # pyplot.plot(df["maf"].values)
 # pyplot.title("MAF", y=1, loc='left')
 
 pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["engine_rpm"].values)
-pyplot.title("EngineRPM", y=1, loc='left')
+pyplot.plot(df["engine_rpm"].values, label='RPM')
+pyplot.ylabel('RPM')
+#pyplot.legend()
+
+
 
 
 # pyplot.subplot(plots, 1, next(position))
@@ -69,13 +77,16 @@ pyplot.title("EngineRPM", y=1, loc='left')
 # pyplot.title("ThrottlePosition", y=1, loc='left')
 
 pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["direct_fuel_rail_pressure"].values)
-pyplot.title("DirectFuelRailPressure", y=1, loc='left')
+pyplot.plot(df["direct_fuel_rail_pressure"].values, label='DirectFuelRailPressure')
+pyplot.ylabel('DirectFuelRailPressure')
+#pyplot.legend()
 
 pyplot.subplot(plots, 1, next(position))
-pyplot.plot(df["fuel_level"].values)
-pyplot.title("FuelLevel", y=1, loc='left')
+pyplot.plot(df["fuel_level"].values, label='FuelLevel')
+pyplot.ylabel('FuelLevel')
+#pyplot.legend()
 
+#pyplot.title("FuelLevel", y=1, loc='left')
 
 # pyplot.subplot(plots, 1, next(position))
 # pyplot.plot(df["egr_error"].values)
@@ -124,6 +135,7 @@ pyplot.title("FuelLevel", y=1, loc='left')
 # pyplot.title("ControlModuleVoltage", y=1, loc='left')
 
 #mplcursors.cursor(hover=True)
+
 pyplot.show()
 
 

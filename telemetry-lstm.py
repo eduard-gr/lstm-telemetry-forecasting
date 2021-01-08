@@ -1,3 +1,4 @@
+from sys import argv
 from math import sqrt
 from numpy import concatenate
 from matplotlib import pyplot
@@ -13,13 +14,27 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
 from keras.layers import GRU
+from keras.layers import RNN
 import tensorflow as tf
 from tensorflow import keras
 
 print(tf.__version__)
 
 
-#set_option('display.max_columns', None)
+_, rnn, unit, epoch, batch = argv
+
+rnn = rnn.upper()
+
+if(rnn not in ['RNN', 'LSTM', 'GRU']):
+	print('unknown learning algorithm',rnn)
+	exit(1)
+
+print(
+	'rnn:', rnn,
+	'unit:', unit,
+	'epoch:', epoch,
+	'batch:', batch)
+
 
 # Set CPU as available physical device
 #my_devices = tf.config.experimental.list_physical_devices(device_type='CPU')
@@ -44,7 +59,7 @@ def series_to_supervised(data):
 
 # load dataset
 df = read_csv('fm_volvo_odb_telemetry.csv', index_col=0).interpolate(method='linear', axis=0)
-#, header=0, index_col=0
+
 values = df.values
 
 # ensure all data is float
@@ -61,19 +76,19 @@ reframed = series_to_supervised(scaled)
 #Udaljaem NaN
 reframed.dropna(inplace=True)
 
-print("supervised series")
-print(reframed.head())
+#print("supervised series")
+#print(reframed.head())
 
 test_size = 1000
 test = reframed.iloc[:test_size, :]
 train = reframed.iloc[test_size:, :]
 
-print('train:', len(train.index))
+#print('train:', len(train.index))
 # print(train.head())
 # print('...')
 # print(train.tail())
 
-print('test:', len(test.index))
+#print('test:', len(test.index))
 # print(test.head())
 # print('...')
 # print(test.tail())
@@ -83,67 +98,56 @@ print('test:', len(test.index))
 train_X, train_y = train.values[:, :-1], train.values[:, -1]
 test_X, test_y = test.values[:, :-1], test.values[:, -1]
 
-#print('train_y')
-#print(train_y)
 
-#print('test_y')
-#print(test_y)
-
-#exit(0)
 # reshape input to be 3D [samples, timesteps, features]
 train_X = train_X.reshape((train_X.shape[0], 1, train_X.shape[1]))
 test_X = test_X.reshape((test_X.shape[0], 1, test_X.shape[1]))
 
-print(
-    train_X.shape,
-    train_y.shape,
-    test_X.shape,
-    test_y.shape)
-
-# print('train_X&Y')
-# print(train_X)
-# print(train_y)
-#
-# print('test_X&Y')
-# print(test_X)
-# print(test_y)
+#print(train_X.shape, train_y.shape, test_X.shape, test_y.shape)
 
 #design network
 model = Sequential()
-model.add(GRU(100, input_shape=(train_X.shape[1], train_X.shape[2])))
+
+if (rnn == "RNN"):
+    model.add(RNN(unit, input_shape=(train_X.shape[1], train_X.shape[2])))
+elif (rnn == "LSTM"):
+    model.add(LSTM(unit, input_shape=(train_X.shape[1], train_X.shape[2])))
+elif (rnn == "GRU"):
+    model.add(GRU(unit, input_shape=(train_X.shape[1], train_X.shape[2])))
+else:
+    exit(1)
+
 model.add(Dense(1))
 
-model.compile(
-    loss='mae',
-    optimizer='adam')
+model.compile(loss='mae', optimizer='adam')
 
 # fit network
 history = model.fit(
     train_X,
     train_y,
-    epochs=100,
-    batch_size=72,
+    epochs=epoch,
+    batch_size=batch,
     validation_data=(test_X, test_y),
     verbose=1,
     shuffle=False)
 
 # print("save model")
-# model.save('telemetry-model')
+model.save('model_' + rnn + '_' + unit + '_' + epoch + '_' + batch)
 
 #model = keras.models.load_model('telemetry-model')
 
 # plot history
-pyplot.plot(history.history['loss'], label='train')
-pyplot.plot(history.history['val_loss'], label='test')
+pyplot.plot(history.history['loss'], label='loss')
+pyplot.plot(history.history['val_loss'], label='val loss')
+pyplot.plot(history.history['accuracy'], label='accuracy')
+pyplot.plot(history.history['val_accuracy'], label='val_accuracy')
 pyplot.legend()
-#pyplot.show()
-pyplot.savefig('test.png')
+pyplot.title('Fit rnn:%s unit:%d epoch:%d batch:%d ' % (rnn, unit, epoch, batch))
+pyplot.savefig('fit_' + rnn + '_' + unit + '_' + epoch + '_' + batch + '.png')
 
 # make a prediction
 yhat = model.predict(test_X)
-#yhat[yhat < 0] = 0
 test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
-
 
 # invert scaling for forecast
 inv_yhat = concatenate((yhat, test_X[:, 1:]), axis=1)
@@ -159,34 +163,15 @@ inv_y = concatenate((test_y, test_X[:, 1:]), axis=1)
 inv_y = scaler.inverse_transform(inv_y)
 inv_y = inv_y[:, 0]
 
-
-# print("predicted")
-# df_yhat = DataFrame(yhat)
-# print(df_yhat.head())
-# print("...")
-# print(df_yhat.tail())
-
-
-# print("inv_y")
-# df_test_y = DataFrame(test_y)
-# print(df_test_y.head())
-# print("...")
-# print(df_test_y.tail())
-
 # calculate RMSE
 rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
-print('Test RMSE: %.3f' % rmse)
 
 pyplot.figure()
-#pyplot.subplots_adjust(hspace=0.5,bottom=0.05,top=0.95)
-
-pyplot.subplot(1, 1, 1)
-pyplot.plot(inv_y)
-pyplot.title("RPM", y=1, loc='left')
-
-pyplot.plot(inv_yhat)
-pyplot.title("Predicted", y=1, loc='left')
-pyplot.savefig('test2.png')
+pyplot.plot(inv_y, label='RPM')
+pyplot.plot(inv_yhat, label='Predicted')
+pyplot.legend()
+pyplot.title('Prediction result RMSE:%.3f rnn:%s unit:%d epoch:%d batch:%d ' % (rmse, rnn, unit, epoch, batch))
+pyplot.savefig('predict_' + rnn + '_' + unit + '_' + epoch + '_' + batch + '.png')
 
 #virtualenv -p python3.7 ./venv
 #source ./venv/bin/activate
