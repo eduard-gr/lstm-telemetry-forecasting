@@ -136,7 +136,8 @@ history = model.fit(
 pyplot.plot(history.history['loss'], label='train')
 pyplot.plot(history.history['val_loss'], label='test')
 pyplot.legend()
-pyplot.show()
+#pyplot.show()
+pyplot.savefig('test.png')
 
 # make a prediction
 yhat = model.predict(test_X)
@@ -176,6 +177,16 @@ inv_y = inv_y[:, 0]
 rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
 print('Test RMSE: %.3f' % rmse)
 
+pyplot.figure()
+pyplot.subplots_adjust(hspace=0.5,bottom=0.05,top=0.95)
+
+pyplot.subplot(1, 1, 1)
+pyplot.plot(inv_y)
+pyplot.title("RPM", y=1, loc='left')
+
+pyplot.plot(inv_yhat)
+pyplot.title("Predicted", y=1, loc='left')
+pyplot.savefig('test2.png')
 
 #virtualenv -p python3.7 ./venv
 #source ./venv/bin/activate
