@@ -110,7 +110,7 @@ print(
 
 #design network
 model = Sequential()
-model.add(GRU(400, input_shape=(train_X.shape[1], train_X.shape[2])))
+model.add(GRU(100, input_shape=(train_X.shape[1], train_X.shape[2])))
 model.add(Dense(1))
 
 model.compile(
@@ -178,7 +178,7 @@ rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
 print('Test RMSE: %.3f' % rmse)
 
 pyplot.figure()
-pyplot.subplots_adjust(hspace=0.5,bottom=0.05,top=0.95)
+#pyplot.subplots_adjust(hspace=0.5,bottom=0.05,top=0.95)
 
 pyplot.subplot(1, 1, 1)
 pyplot.plot(inv_y)
