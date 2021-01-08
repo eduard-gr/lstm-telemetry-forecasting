@@ -20,7 +20,7 @@ from tensorflow import keras
 
 
 if(len(argv) != 5):
-    print("unit epoch batch")
+    print("RNN unit epoch batch")
     print("telemetry-lstm.py LSTM 100 100 70")
     exit(1)
 
@@ -114,24 +114,26 @@ test_X = test_X.reshape((test_X.shape[0], 1, test_X.shape[1]))
 model = Sequential()
 
 if (rnn == "RNN"):
-    model.add(RNN(unit, input_shape=(train_X.shape[1], train_X.shape[2])))
+    model.add(RNN(int(unit), input_shape=(train_X.shape[1], train_X.shape[2])))
 elif (rnn == "LSTM"):
-    model.add(LSTM(unit, input_shape=(train_X.shape[1], train_X.shape[2])))
+    model.add(LSTM(int(unit), input_shape=(train_X.shape[1], train_X.shape[2])))
 elif (rnn == "GRU"):
-    model.add(GRU(unit, input_shape=(train_X.shape[1], train_X.shape[2])))
+    model.add(GRU(int(unit), input_shape=(train_X.shape[1], train_X.shape[2])))
 else:
     exit(1)
 
 model.add(Dense(1))
 
-model.compile(loss='mae', optimizer='adam')
+model.compile(
+    loss='mae', 
+    optimizer='adam')
 
 # fit network
 history = model.fit(
     train_X,
     train_y,
-    epochs=epoch,
-    batch_size=batch,
+    epochs=int(epoch),
+    batch_size=int(batch),
     validation_data=(test_X, test_y),
     verbose=1,
     shuffle=False)
