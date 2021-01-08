@@ -144,13 +144,24 @@ model.save('model_' + rnn + '_' + unit + '_' + epoch + '_' + batch)
 #model = keras.models.load_model('telemetry-model')
 
 # plot history
-pyplot.plot(history.history['loss'], label=('loss (%.f)' % history.history['loss'][-1]))
-pyplot.plot(history.history['val_loss'], label=('val_loss (%.f)' % history.history['val_loss'][-1]))
-pyplot.plot(history.history['accuracy'], label=('accuracy (%.f)' % history.history['accuracy'][-1]))
-pyplot.plot(history.history['val_accuracy'], label=('val_accuracy (%.f)' % history.history['val_accuracy'][-1]))
+pyplot.plot(history.history['loss'], label=('train (%.f)' % history.history['loss'][-1]))
+pyplot.plot(history.history['val_loss'], label=('test (%.f)' % history.history['val_loss'][-1]))
 pyplot.legend()
-pyplot.title('Fit rnn:%s unit:%d epoch:%d batch:%d ' % (rnn, unit, epoch, batch))
-pyplot.savefig('fit_' + rnn + '_' + unit + '_' + epoch + '_' + batch + '.png')
+pyplot.title('Model loss rnn:%s unit:%d epoch:%d batch:%d ' % (rnn, unit, epoch, batch))
+pyplot.ylabel('loss')
+pyplot.xlabel('epoch')
+pyplot.savefig('loss_' + rnn + '_' + unit + '_' + epoch + '_' + batch + '.png')
+
+
+pyplot.plot(history.history['acc'], label=('train (%.f)' % history.history['acc'][-1]))
+pyplot.plot(history.history['val_acc'], label=('test (%.f)' % history.history['val_acc'][-1]))
+pyplot.legend()
+pyplot.title('Model accuracy rnn:%s unit:%d epoch:%d batch:%d ' % (rnn, unit, epoch, batch))
+pyplot.ylabel('accuracy')
+pyplot.xlabel('epoch')
+pyplot.savefig('accuracy_' + rnn + '_' + unit + '_' + epoch + '_' + batch + '.png')
+
+
 
 # make a prediction
 yhat = model.predict(test_X)
