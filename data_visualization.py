@@ -5,7 +5,8 @@ import seaborn as sns
 
 test_size = 1000
 
-df = pd.read_csv('fm_volvo_odb_telemetry.csv', index_col=0).iloc[:test_size, :]
+df = pd.read_csv('fm_volvo_odb_telemetry.csv', index_col=0).interpolate(method='akima', axis=0).iloc[:test_size, :]
+#.interpolate(method='akima', order=5)
 #.interpolate(method='linear', axis=0)
 #df.info()
 
@@ -53,7 +54,7 @@ position = position_cenerator()
 
 
 
-#.interpolate(method='akima', order=5)
+
 
 pyplot.subplot(plots, 1, next(position))
 pyplot.plot(df["speed"].values)
